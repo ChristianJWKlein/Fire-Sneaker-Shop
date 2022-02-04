@@ -1,7 +1,4 @@
-const express = require("express");
-const credentials = require("./credentials.json");
 const { connectToFirestore } = require("./connectToFirestore.js");
-const { initializeApp, getApps, cert } = require("firebase-admin/app");
 
 const getUserCollection = (db) => {
   const col = db.collection("users");

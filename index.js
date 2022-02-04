@@ -1,5 +1,11 @@
 const express = require("express");
 const { connectToFirestore } = require("./connectToFirestore.js");
+const { getUserCollection, getUsers, insertUser } = require("./users.js");
+const {
+  getProductCollection,
+  getProducts,
+  insertProduct,
+} = require("./products.js");
 
 const app = express();
 app.use(express.json());
@@ -7,7 +13,7 @@ app.use(express.json());
 //const userRef = db.collection("users");
 //const prodRef = db.collection("products");
 
-app.get("/", (req, res) => {
+app.get("/user", (req, res) => {
   const db = connectToFirestore();
   db.collection("users")
     .get()
@@ -44,4 +50,27 @@ app.post("/insertuser", (req, res) => {
 
 app.listen(3000, () => {
   console.log("Im here");
+});
+
+// app.get("/product", async (req, res) => {
+//   const product = req.db.collection("products");
+
+//   await connectToFirestore();
+// });
+
+app.post("/insertproduct", async (req, res) => {
+  const db = connectToFirestore();
+  const product = req.body;
+  db.collection("products");
+  if (
+    !product.sku ||
+    !product.title ||
+    !product.description ||
+    !product.vendor
+  ) {
+    res.send("sku, title, description and/or vendor not entered");
+    return;
+  } //IF RETURN NOT THERE YOU DOnt prevent from happeniing
+  await insertProduct(product);
+  res.send(`succesfully inserted product: ${JSON.stringify(product)}`);
 });
