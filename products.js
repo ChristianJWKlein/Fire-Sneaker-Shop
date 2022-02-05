@@ -6,6 +6,7 @@ const getProductCollection = (db) => {
 };
 
 const getProducts = async () => {
+  const db = connectToFirestore();
   const col = getProductCollection();
   const products = await col.find({}).toArray();
   return products;

@@ -48,15 +48,12 @@ app.post("/insertuser", (req, res) => {
     .catch(console.error);
 });
 
-app.listen(3000, () => {
-  console.log("Im here");
+app.get("/products", async (req, res) => {
+  const db = connectToFirestore();
+  const snapshot = await db.collection("products").get();
+  const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  res.send(list); //Only returns product id
 });
-
-// app.get("/product", async (req, res) => {
-//   const product = req.db.collection("products");
-
-//   await connectToFirestore();
-// });
 
 app.post("/insertproduct", async (req, res) => {
   const db = connectToFirestore();
@@ -73,4 +70,20 @@ app.post("/insertproduct", async (req, res) => {
   } //IF RETURN NOT THERE YOU DOnt prevent from happeniing
   await insertProduct(product);
   res.send(`succesfully inserted product: ${JSON.stringify(product)}`);
+});
+
+//Below, we post an update to the objects within a product id...  We delete the specified products in that id.  Not sure if ID is delted then replaced with specified id in post.  In postman, you specify the object with id, and whatever other attributes you want to update.  Reflections shown in firestore.
+app.post("/updateproduct", async (req, res) => {
+  const db = connectToFirestore();
+  const id = req.body.id;
+  console.log("before deleting id:", req.body);
+  delete req.body.id;
+  console.log("after deleting id:", req.body);
+  const data = req.body;
+  await db.collection("products").doc(id).update(data);
+  res.send("succesfully updated product");
+});
+
+app.listen(3000, () => {
+  console.log("Im here");
 });
