@@ -1,7 +1,10 @@
 const { connectToFirestore } = require("./connectToFirestore.js");
 
+const db = connectToFirestore();
+usersRef = db.collection("users");
+
 const getUserCollection = (db) => {
-  const col = db.collection("users");
+  const col = usersRef;
   return col;
 };
 
@@ -19,4 +22,4 @@ const insertUser = async (user) => {
   return res;
 };
 
-module.exports = { getUserCollection, getUsers, insertUser };
+module.exports = { usersRef, getUserCollection, getUsers, insertUser };

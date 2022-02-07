@@ -1,6 +1,11 @@
 const express = require("express");
 const { connectToFirestore } = require("./connectToFirestore.js");
-const { getUserCollection, getUsers, insertUser } = require("./users.js");
+const {
+  usersRef,
+  getUserCollection,
+  getUsers,
+  insertUser,
+} = require("./users.js");
 const {
   getProductCollection,
   getProducts,
@@ -10,12 +15,11 @@ const {
 const app = express();
 app.use(express.json());
 
-//const userRef = db.collection("users");
 //const prodRef = db.collection("products");
 
 app.get("/user", (req, res) => {
   const db = connectToFirestore();
-  db.collection("users")
+  usersRef
     .get()
     .then((snapshot) => {
       const users = snapshot.docs.map((doc) => {
@@ -31,7 +35,7 @@ app.get("/user", (req, res) => {
 app.post("/insertuser", async (req, res) => {
   const db = connectToFirestore();
   const user = req.body;
-  db.collection("users");
+  usersRef;
   if (!user.name || !user.phone || !user.address || !user.email) {
     res.send("Name, phone, address and/or email not entered");
     return;
@@ -43,7 +47,7 @@ app.post("/insertuser", async (req, res) => {
 // app.post("/insertuser", (req, res) => {
 //   const db = connectToFirestore();
 //   const user = req.body;
-//   db.collection("users")
+//   usersRef
 //     .add(user)
 //     .then(() => res.send(`Here is what you put in: ${user}`))
 //     .catch(console.error);
