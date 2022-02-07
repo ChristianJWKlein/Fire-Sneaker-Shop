@@ -28,31 +28,32 @@ app.get("/user", (req, res) => {
     .catch(console.error);
 });
 
-// app.post("/insertuser", async (req, res) => {
-//   const db = connectToFirestore();
-//   const user = req.body;
-//   if (!user.name || !user.phone || !user.address || !user.email) {
-//     res.send("Name, phone, address and/or email not entered");
-//     return; //IF RETURN NOT THERE YOU DOnt prevent from happeniing
-//   }
-//   await insertUser(user);
-//   res.send(`succesfully inserted user: ${JSON.stringify(user)}`);
-// });
-
-app.post("/insertuser", (req, res) => {
+app.post("/insertuser", async (req, res) => {
   const db = connectToFirestore();
   const user = req.body;
-  db.collection("users")
-    .add(user)
-    .then(() => res.send(`Here is what you put in: ${user}`))
-    .catch(console.error);
+  db.collection("users");
+  if (!user.name || !user.phone || !user.address || !user.email) {
+    res.send("Name, phone, address and/or email not entered");
+    return;
+  }
+  await insertUser(user);
+  res.send(`succesfully inserted user: ${JSON.stringify(user)}`);
 });
+
+// app.post("/insertuser", (req, res) => {
+//   const db = connectToFirestore();
+//   const user = req.body;
+//   db.collection("users")
+//     .add(user)
+//     .then(() => res.send(`Here is what you put in: ${user}`))
+//     .catch(console.error);
+// });
 
 app.get("/products", async (req, res) => {
   const db = connectToFirestore();
   const snapshot = await db.collection("products").get();
   const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  res.send(list); //Only returns product id
+  res.send(list);
 });
 
 app.post("/insertproduct", async (req, res) => {
@@ -73,12 +74,11 @@ app.post("/insertproduct", async (req, res) => {
 });
 
 //Below, we post an update to the objects within a product id...  We delete the specified products in that id.  Not sure if ID is delted then replaced with specified id in post.  In postman, you specify the object with id, and whatever other attributes you want to update.  Reflections shown in firestore.
+
 app.post("/updateproduct", async (req, res) => {
   const db = connectToFirestore();
   const id = req.body.id;
-  console.log("before deleting id:", req.body);
   delete req.body.id;
-  console.log("after deleting id:", req.body);
   const data = req.body;
   await db.collection("products").doc(id).update(data);
   res.send("succesfully updated product");
